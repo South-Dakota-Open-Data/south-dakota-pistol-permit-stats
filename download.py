@@ -120,6 +120,8 @@ def scrape():
 
         data_out.append(d)
 
+    data_out.sort(key=lambda x: x['snapshot_date'])
+
     with open(file_csv, 'w') as outfile:
         writer = csv.DictWriter(
             outfile,
