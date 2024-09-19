@@ -152,9 +152,9 @@ def scrape():
             outfile,
             fieldnames=[
                 'snapshot_date',
-                'enhanced',
-                'gold',
                 'regular',
+                'gold',
+                'enhanced',
                 'total',
                 'archive_url',
                 'archive_date'
