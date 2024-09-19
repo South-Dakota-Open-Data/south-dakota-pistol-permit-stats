@@ -85,7 +85,10 @@ def scrape():
     with open(file_snapshots, 'r') as infile:
         lookup = json.load(infile)
 
+    snapshot_data = {}
+
     for page in pages:
+
         timestamp = page.split('/')[-1].split('.')[0]
         deets = lookup.get(timestamp)
 
@@ -120,7 +123,29 @@ def scrape():
 
         data_out.append(d)
 
-    data_out.sort(key=lambda x: x['snapshot_date'])
+    data_out.sort(
+        key=lambda x: (
+            x['snapshot_date'],
+            x['archive_date']
+        )
+    )
+
+    # in all but one case, the correct
+    # numbers are in the most recent archival, so
+    # the strategy is to loop over a sorted version
+    # of the data and overwrite a dict with the latest
+    # data, fixing one exception along the way
+    keep = {}
+
+    for archival in data_out:
+
+        snapshot_date = archival['snapshot_date']
+
+        # fix the one exception
+        if snapshot_date == '2020-03-31':
+            archival['total'] = 95795
+
+        keep[snapshot_date] = archival
 
     with open(file_csv, 'w') as outfile:
         writer = csv.DictWriter(
@@ -137,7 +162,7 @@ def scrape():
         )
 
         writer.writeheader()
-        writer.writerows(data_out)
+        writer.writerows(list(keep.values()))
 
 
 if __name__ == '__main__':
